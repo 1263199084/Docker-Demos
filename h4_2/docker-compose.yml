@@ -1,0 +1,55 @@
+version: "3.8"
+services:
+  mariadb:
+    image: my-mariadb
+    container_name: cdb
+    restart: always
+    build:
+      context: ./mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+
+  nginx:
+    image: nginx
+    container_name: cngx
+    ports:
+      - 80:2420
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - tomcat01
+      - tomcat02
+      - tomcat03
+
+  tomcat01:
+    image: my-tomcat
+    container_name: ctc1
+    build:
+      context: ./tomcat
+    volumes:
+      - ./tomcat:/usr/local/tomcat/webapps
+    depends_on:
+      - mariadb
+    restart: always
+
+  tomcat02:
+    image: my-tomcat
+    container_name: ctc2
+    build:
+      context: ./tomcat
+    volumes:
+      - ./tomcat:/usr/local/tomcat/webapps
+    depends_on:
+      - mariadb
+    restart: always
+
+  tomcat03:
+    image: my-tomcat
+    container_name: ctc3
+    build:
+      context: ./tomcat
+    volumes:
+      - ./tomcat:/usr/local/tomcat/webapps
+    depends_on:
+      - mariadb
+    restart: always
